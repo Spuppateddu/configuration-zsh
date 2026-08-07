@@ -1,0 +1,75 @@
+# zshrc sets this before sourcing us; the fallback keeps the file usable alone.
+ZSH_CONFIG_DIR="${ZSH_CONFIG_DIR:-${0:A:h}}"
+
+# Calculator (Qalculate): interactive, or one-shot `calc '43 + 5 * 20'`.
+alias calc=qalc
+
+# Aliases Vim
+alias v="vim ."
+
+# Aliases Yazi
+# A function, not an alias, so we can cd into the folder yazi quit in — it
+# writes its last cwd to --cwd-file.
+r() {
+    local tmp cwd
+    tmp="$(mktemp -t yazi-cwd.XXXXXX)" || return 1
+    # Path baked in now, not read at trap time (locals are gone by then).
+    trap "rm -f -- ${(q)tmp}" EXIT INT TERM
+    yazi "$@" --cwd-file="$tmp"
+    # `$(cat)` strips the trailing newline yazi writes, which would break the cd.
+    cwd="$(command cat -- "$tmp" 2>/dev/null)"
+    if [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
+        builtin cd -- "$cwd"
+    fi
+}
+
+# Tmux
+
+alias ta="tmux attach"
+
+tn() {
+    if [ -z "$1" ]; then
+        tmux
+    else
+        tmux new -s "$1"
+    fi
+}
+
+# Reload every config after editing one
+#
+# Hands the work to best-linux-environment's boot.sh: it pulls each config repo
+# and re-runs its install.sh (so ~/.vimrc, ~/.tmux.conf, ~/.zshrc and the i3
+# config go back to what the repo now says), then reloads what is already
+# running — i3, every tmux server, the font cache, X resources.
+#
+# Guarded on the script being there: this file is sourced on machines that don't
+# have best-linux-environment, and a missing script must not break the shell.
+# Override the location with BLE_HOME if the repo lives elsewhere.
+b-reload() {
+    local boot="${BLE_HOME:-$HOME/best-linux-environment}/boot.sh"
+    if [ ! -x "$boot" ]; then
+        print -u2 "b-reload: no best-linux-environment at $boot — nothing to reload."
+        return 1
+    fi
+    "$boot" "$@" || return $?
+    # boot.sh cannot reach a shell that already exists — only a new one reads the
+    # new zshrc. `exec` replaces this shell in place, so no nesting builds up.
+    # Skipped for --dry-run, which is supposed to change nothing.
+    case " $* " in
+        *" --dry-run "*) return 0 ;;
+    esac
+    exec zsh
+}
+
+# Lazygit
+alias lz="lazygit"
+alias ld="lazydocker"
+
+# Git
+alias gs="git status"
+alias gp="git pull"
+
+# Machine-local, untracked aliases (SSH hosts, secrets, machine-specific paths)
+ZSH_ALIAS_LOCAL="$ZSH_CONFIG_DIR/zsh-alias.local"
+[ -f "$ZSH_ALIAS_LOCAL" ] && source "$ZSH_ALIAS_LOCAL"
+unset ZSH_ALIAS_LOCAL

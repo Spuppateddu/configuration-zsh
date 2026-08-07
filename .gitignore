@@ -1,0 +1,21 @@
+# Machine-local / private overrides (SSH hosts, secrets, machine-specific paths).
+# Covers zsh-alias.local, which zsh-alias sources at the end if it exists.
+*.local
+
+# Editor & swap files
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+
+# OS junk
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+desktop.ini
+
+# zsh runtime artifacts (in case the repo is ever cloned into place directly)
+.zcompdump*
+.zsh_history
