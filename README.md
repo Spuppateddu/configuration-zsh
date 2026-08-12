@@ -3,6 +3,8 @@
 My personal **Zsh** configuration — built on top of [Oh My Zsh](https://ohmyz.sh/).
 It bundles a tidy `zshrc` and a big set of aliases & helper functions.
 
+![The gnzh prompt running fastfetch in alacritty](./pictures/zsh_setup.png)
+
 ## 🔗 On its own, or as part of best-linux-environment
 
 Both work, and this repo is written not to care which one ran it.
@@ -137,6 +139,7 @@ A few of the aliases you get (see [`zsh-alias`](./zsh-alias) for the full list):
 ```
 .zsh/
 ├── install.sh    # installs deps + wires ~/.zshrc (idempotent)
+├── pictures/     # screenshots used by this README
 ├── zshrc         # main entry point (sourced from ~/.zshrc)
 └── zsh-alias     # aliases & functions (sources zsh-alias.local)
 # zsh-alias.local — your private, untracked aliases (gitignored)
