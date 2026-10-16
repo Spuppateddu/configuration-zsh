@@ -1,3 +1,10 @@
+# Over ssh, land in tmux's 'default' session (~/.tmuxrc/scripts/default_session.sh).
+# Leaving tmux ends the login too; if tmux can't start, this shell carries on.
+if [[ -o interactive && -o login && -n "${SSH_TTY:-}" ]] &&
+    [[ -x "$HOME/.tmuxrc/scripts/default_session.sh" ]]; then
+    "$HOME/.tmuxrc/scripts/default_session.sh" --ssh && exit
+fi
+
 # Path to your oh-my-zsh installation.
 export ZSH=$HOME/.oh-my-zsh
 
