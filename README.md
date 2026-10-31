@@ -1,7 +1,7 @@
 # .zsh
 
 My personal **Zsh** configuration — built on top of [Oh My Zsh](https://ohmyz.sh/).
-It bundles a tidy `zshrc` and a big set of aliases & helper functions.
+It bundles a tidy `zshrc`; the aliases live in best-linux-environment.
 
 ![The gnzh prompt running fastfetch in alacritty](./pictures/zsh_setup.png)
 
@@ -19,16 +19,18 @@ sets up an entire Ubuntu box, and this is one of the config repos it manages.
 Its `./setup.sh` clones this one into `~/linux-configuration/zsh`, leaves
 `~/.zsh` behind as a symlink to it, and then calls this repo's own `install.sh`
 — the same script, doing the same work. It also keeps it pulled and re-applied
-at every boot, and covers two of the optional tools in the table below on its
-own account: `yazi` and `lazygit` are listed there as required, named after the
-aliases here that call them.
+at every boot, and installs the tools its shared aliases call (`yazi`,
+`lazygit`, …).
 
 ## ✨ Features
 
 - Curated Oh My Zsh setup with the `gnzh` theme.
 - Autosuggestions, syntax highlighting and history substring search.
-- Handy aliases for Git, Laravel/PHP, Composer, Node and more.
-- Machine-local overrides kept **out of version control** (`zsh-alias.local`).
+- **No aliases of its own.** The short ones (`lz`, `ta`, `r`, `calc`, …) live in
+  [best-linux-environment](https://github.com/Spuppateddu/best-linux-environment)'s
+  `aliases` file, shared by bash and zsh: add a new alias there, not here.
+- **Private lines stay private.** `zsh-alias.local` is gitignored and sourced
+  automatically. Machine-local aliases go in best-linux-environment's `aliases.local`.
 
 ## 📦 Requirements
 
@@ -36,11 +38,7 @@ aliases here that call them.
 | --- | --- |
 | [Zsh](https://www.zsh.org/) | The shell itself |
 | [Oh My Zsh](https://ohmyz.sh/#install) | Framework / plugin loader |
-| [tmux](https://github.com/tmux/tmux) | The `ta` / `tn` aliases (optional) |
 | [Homebrew](https://brew.sh/) | Referenced for some paths (optional) |
-| [yazi](https://github.com/sxyazi/yazi) | The `r` file-manager function (optional) |
-| [Qalculate](https://qalculate.github.io/) | The `calc` alias — provides `qalc` (optional) |
-| [lazygit](https://github.com/jesseduffield/lazygit) | The `lz` alias (optional) |
 
 `install.sh` installs Zsh, Oh My Zsh and these plugins for you — you only need
 this list if you'd rather wire things up by hand:
@@ -101,38 +99,14 @@ this list if you'd rather wire things up by hand:
    (along with its `ZSH_THEME` and `plugins=` lines) from `~/.zshrc`, then re-run
    the installer.
 
-2. **Set up your machine-local aliases** (SSH hosts, secrets, etc.).
-   Create `zsh-alias.local` next to `zsh-alias` — it's gitignored and sourced
-   automatically, so your private hostnames/IPs never get committed:
-
-   ```sh
-   cat > ~/.zsh/zsh-alias.local <<'EOF'
-   # Machine-local aliases — not tracked by git
-   alias myserver="ssh user@host-or-ip"
-   alias prod="ssh ubuntu@your.prod.ip"
-   EOF
-   ```
+2. **Aliases are not in this repo:** best-linux-environment's `aliases` (every
+   machine) and `aliases.local` (this machine, gitignored) hold them all.
 
 3. **Reload the shell:**
 
    ```sh
    exec zsh   # or just open a new terminal
    ```
-
-## 🔧 Usage
-
-A few of the aliases you get (see [`zsh-alias`](./zsh-alias) for the full list):
-
-| Alias | Does |
-| --- | --- |
-| `zshconfig` | `cd` into this repo and `git pull` |
-| `zshreload` | Re-exec zsh to pick up config changes |
-| `gs` / `gp` | `git status` / `git pull` |
-| `lz` | Open `lazygit` |
-| `pa <cmd>` | `php artisan <cmd>` |
-| `lpm [:sub] [args]` | `php artisan migrate` (`lpm :fresh --seed`) |
-| `r` | Open `yazi`, and `cd` to wherever you left it |
-| `chrome-debug` | Headless Chrome with remote debugging on `:9222` (`CHROME_DEBUG_PORT` to change) |
 
 ## 📁 Layout
 
@@ -141,8 +115,8 @@ A few of the aliases you get (see [`zsh-alias`](./zsh-alias) for the full list):
 ├── install.sh    # installs deps + wires ~/.zshrc (idempotent)
 ├── pictures/     # screenshots used by this README
 ├── zshrc         # main entry point (sourced from ~/.zshrc)
-└── zsh-alias     # aliases & functions (sources zsh-alias.local)
-# zsh-alias.local — your private, untracked aliases (gitignored)
+└── zsh-alias     # sources zsh-alias.local — no aliases of its own
+# zsh-alias.local — your private, untracked lines (gitignored)
 ```
 
 ## 📄 License
